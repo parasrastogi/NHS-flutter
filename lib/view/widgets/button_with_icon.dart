@@ -27,7 +27,8 @@ class ButtonWithIcon extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 title,
-                style: TextStyle(color: titleColor),
+                style:
+                    TextStyle(color: titleColor, fontWeight: FontWeight.normal),
               ),
             ),
           )

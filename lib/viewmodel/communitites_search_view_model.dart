@@ -4,7 +4,7 @@ import 'package:newhomesource/data/model/community_search/request_param_model.da
 import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
 import 'package:newhomesource/data/repository/community_search_repository.dart';
 
-class CommunitiesSearchViewModel {
+class CommunitySearchResultViewModel {
   int page = 1;
   int totalCount = 0;
   int totalHomeCount = 0;
@@ -13,8 +13,8 @@ class CommunitiesSearchViewModel {
   bool isLoading = false;
   bool showShimmer = true;
   List<CommunityModel> communityList = [];
-  Future<List<CommunityModel>> getCommunities(
-      TypeAheadModel typeAheadModel) async {
+  Future<List<CommunityModel>> getData(TypeAheadModel typeAheadModel) async {
+    isLoading = true;
     late RequestParamModel reqData;
     switch (typeAheadModel.Type) {
       case "Market":
@@ -22,7 +22,7 @@ class CommunitiesSearchViewModel {
             includeMPC: true,
             brandId: 0,
             marketId: typeAheadModel.MarketId,
-            paging: Paging(pageSize: pageSize, page: page++));
+            paging: Paging(pageSize: pageSize, page: page++, sortBy: "Random"));
         break;
       case "Community":
       case "Developer":
@@ -66,11 +66,12 @@ class CommunitiesSearchViewModel {
     var communityResult =
         await CommunitySearchRepository().fetchCommunityList(reqData);
     totalCount = communityResult.totalCount ?? 0;
+    isLoading = false;
     communityList.addAll(communityResult.resultsArray);
     return communityList;
   }
 
   Future<List<CommunityModel>> loadMore(TypeAheadModel typeAheadModel) async {
-    return await getCommunities(typeAheadModel);
+    return await getData(typeAheadModel);
   }
 }

@@ -5,13 +5,9 @@ import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
 import 'package:newhomesource/utilities/colors.dart';
 import 'package:newhomesource/view/screens/srp/srp_container_page.dart';
 import '../../widgets/search_result_item.dart';
-import '../srp/communities_search_result_page.dart';
 import '../map/map_screen.dart';
 
 class SearchPage extends StatefulWidget {
-  // final Function(bool) backButtonCallback;
-  // // bool isHidden;
-  // SearchPage({required this.backButtonCallback});
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -19,8 +15,6 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late FocusNode myFocusNode;
   late FocusNode searchFocusNode;
-  bool isPrevious = false;
-  final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -37,35 +31,26 @@ class _SearchPageState extends State<SearchPage> {
 
   void _onFocusChanged() {
     debugPrint("Focus: " + myFocusNode.hasFocus.toString());
-
-    setState(() {
-      isPrevious = searchFocusNode.hasFocus;
-    });
-    // shouldShowAppbar(myFocusNode.hasFocus);
   }
 
   @override
   Widget build(BuildContext context) {
     myFocusNode.addListener(_onFocusChanged);
-    searchFocusNode.addListener(_onFocusChanged);
-    return NewWidget(myFocusNode: myFocusNode);
-    // return SizedBox(
-    //     height: MediaQuery.of(context).size.height,
-    //     child: NewWidget(myFocusNode: myFocusNode));
-
-    //  childWidget(myFocusNode: myFocusNode),
-    //   ),
-    // );
+    //searchFocusNode.addListener(_onFocusChanged);
+    return NewWidget(
+      myFocusNode: myFocusNode,
+      searchFocusNode: searchFocusNode,
+    );
   }
 }
 
 class NewWidget extends StatelessWidget {
-  const NewWidget({
-    Key? key,
-    required this.myFocusNode,
-  }) : super(key: key);
+  const NewWidget(
+      {Key? key, required this.myFocusNode, required this.searchFocusNode})
+      : super(key: key);
 
   final FocusNode myFocusNode;
+  final FocusNode searchFocusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -82,19 +67,22 @@ class NewWidget extends StatelessWidget {
             ),
           ),
         ),
-        body: ChildWidget(myFocusNode: myFocusNode),
+        body: ChildWidget(
+          myFocusNode: myFocusNode,
+          searchFocusNode: searchFocusNode,
+        ),
       ),
     );
   }
 }
 
 class ChildWidget extends StatelessWidget {
-  ChildWidget({
-    Key? key,
-    required this.myFocusNode,
-  }) : super(key: key);
+  ChildWidget(
+      {Key? key, required this.myFocusNode, required this.searchFocusNode})
+      : super(key: key);
 
   final FocusNode myFocusNode;
+  final FocusNode searchFocusNode;
   //ScrollController _scrollController = new ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -150,6 +138,7 @@ class ChildWidget extends StatelessWidget {
                       hideOnLoading: true,
                       hideOnEmpty: true,
                       textFieldConfiguration: TextFieldConfiguration(
+                        focusNode: searchFocusNode,
                         //controller: _typeAheadController,
                         textInputAction: TextInputAction.next,
                         autofocus: false,
@@ -166,7 +155,8 @@ class ChildWidget extends StatelessWidget {
                             hintText:
                                 'City, Zip, Market Area or Community Name',
                             hintMaxLines: 1,
-                            hintStyle: TextStyle(fontSize: 13)),
+                            hintStyle: TextStyle(
+                                fontSize: 13, color: Colors.grey[400])),
                       ),
                       suggestionsBoxDecoration: SuggestionsBoxDecoration(
                           constraints: BoxConstraints(
@@ -183,15 +173,18 @@ class ChildWidget extends StatelessWidget {
                           },
                         );
                       },
-                      onSuggestionSelected: (suggestion) {
-                        Navigator.push(
+                      onSuggestionSelected: (suggestion) async {
+                        var isPopUp = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
                                 // CommunitiesSearchResultPage(suggestion),
-                                SRPContainerPage(typeAheadModel: suggestion),
+                                SRPContainerPage(selectedLocation: suggestion),
                           ),
                         );
+                        if (isPopUp) {
+                          searchFocusNode.requestFocus();
+                        }
                       },
                       transitionBuilder: (context, suggestionsBox, controller) {
                         return suggestionsBox;
@@ -291,6 +284,8 @@ class ChildWidget extends StatelessWidget {
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.all(8),
                                 hintText: 'Enter Community code',
+                                hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.grey[400]),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: OutlineInputBorder(
@@ -307,7 +302,6 @@ class ChildWidget extends StatelessWidget {
                             width: 90,
                             child: TextButton(
                               onPressed: () {
-                                // FocusManager.instance.primaryFocus!.unfocus();
                                 FocusScope.of(context).unfocus();
                               },
                               child: Text(

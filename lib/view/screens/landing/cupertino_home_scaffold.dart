@@ -5,14 +5,14 @@ import 'package:newhomesource/view/screens/landing/save_page.dart';
 import 'package:newhomesource/view/screens/landing/search_page.dart';
 import 'package:newhomesource/view/screens/tab_items.dart';
 
-import 'more/user_dashboard.dart';
-import 'landing/notes_page.dart';
+import '../more/user_dashboard.dart';
+import 'notes_page.dart';
 
 class CupertinoHomeScaffold extends StatelessWidget {
   final TabItems currentTabItem;
   final ValueChanged<TabItems> onSelectTab;
   final Map<TabItems, GlobalKey<NavigatorState>> navigatorKeys;
-  final Color _inactiveColor = Colors.black54;
+  final Color _inactiveColor = Color(0xFF646464).withOpacity(0.6);
   final Color _activeColor = Color(0xff0079D2);
   CupertinoHomeScaffold(
       {required this.currentTabItem,

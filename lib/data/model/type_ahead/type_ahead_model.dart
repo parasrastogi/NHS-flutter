@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'type_ahead_model.g.dart';
 
 @JsonSerializable()
-class TypeAheadModel {
+class TypeAheadModel extends ChangeNotifier {
   final int Id;
   final String Name;
   final String Type;
@@ -15,8 +16,7 @@ class TypeAheadModel {
   final double Longitude;
   final String City;
   final String State;
-
-  const TypeAheadModel({
+  TypeAheadModel({
     required this.Id,
     required this.Type,
     required this.Name,
@@ -46,5 +46,8 @@ class TypeAheadModel {
     //     State: json['State'] as String);
   }
 
-  Map<String, dynamic> toJson() => _$TypeAheadModelToJson(this);
+  // Map<String, dynamic> toJson() => _$TypeAheadModelToJson(this);
+  Map<String, dynamic> toJson() {
+    return _$TypeAheadModelToJson(this);
+  }
 }

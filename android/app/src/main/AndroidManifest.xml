@@ -7,7 +7,7 @@
         android:label="newhomesource"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyACKujiQ-YpPC179XOvJcROb1tUtLcAiuo"/>
+            android:value="AIzaSyCrzek_wP_S-ucIojntTRsjhAzGtgxO2vw"/>
        <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

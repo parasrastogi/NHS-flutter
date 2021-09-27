@@ -1,21 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
+import 'package:newhomesource/utilities/colors.dart';
 import 'package:newhomesource/view/widgets/shimmer_widget.dart';
 import 'package:newhomesource/viewmodel/builder_search_viewmodel.dart';
 
 class BuilderSearchResultPage extends StatefulWidget {
   final TypeAheadModel typeAheadModel;
 
-  BuilderSearchResultPage(this.typeAheadModel);
+  BuilderSearchResultPage({required Key key, required this.typeAheadModel})
+      : super(key: key);
 
   @override
-  _BuilderSearchResultPageState createState() {
-    return _BuilderSearchResultPageState();
+  BuilderSearchResultPageState createState() {
+    return BuilderSearchResultPageState();
   }
 }
 
-class _BuilderSearchResultPageState extends State<BuilderSearchResultPage>
+class BuilderSearchResultPageState extends State<BuilderSearchResultPage>
     with AutomaticKeepAliveClientMixin<BuilderSearchResultPage> {
   late BuilderSearchViewModel _viewModel;
 
@@ -23,23 +25,22 @@ class _BuilderSearchResultPageState extends State<BuilderSearchResultPage>
   void initState() {
     super.initState();
     _viewModel = BuilderSearchViewModel();
-    getBuilderList();
+    getBuilderList(widget.typeAheadModel);
   }
 
   @override
   void didUpdateWidget(BuilderSearchResultPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _viewModel.brandList.clear();
-    _viewModel.showShimmer = true;
-    getBuilderList();
   }
 
-  void getBuilderList() async {
+  void getBuilderList(TypeAheadModel typeAheadModel) async {
+    _viewModel.brandList.clear();
+    _viewModel.showShimmer = true;
     setState(() {
       _viewModel.aspectRatio = 6 / 4;
     });
     var builderList = await _viewModel.getBuilderList(
-        {"MarketId": widget.typeAheadModel.MarketId, "includeMPC": true});
+        {"MarketId": typeAheadModel.MarketId, "includeMPC": true});
     setState(() {
       _viewModel.brandList = builderList;
       _viewModel.aspectRatio = 9 / 7;
@@ -90,7 +91,7 @@ class _BuilderSearchResultPageState extends State<BuilderSearchResultPage>
               Text(
                 "${builder.count} communities",
                 style:
-                    TextStyle(fontSize: 12, backgroundColor: Color(0xFFd9d9d9)),
+                    TextStyle(fontSize: 12, backgroundColor: kBackgroundColor),
               )
             ],
           );

@@ -3,18 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:newhomesource/data/model/community_search/community_model.dart';
 import 'package:newhomesource/utilities/utils.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'dart:ui';
 
 class CommunityTile extends StatelessWidget {
   CommunityTile(
       {Key? key,
-      required this.CommNametextStyle,
+      required this.commNameTextStyle,
       required this.textStyle,
       required this.community})
       : super(key: key);
 
-  final TextStyle CommNametextStyle;
+  final TextStyle commNameTextStyle;
   final TextStyle textStyle;
   final CommunityModel community;
   final gradientColors = [
@@ -25,9 +24,9 @@ class CommunityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
       width: double.infinity,
-      height: 140,
+      height: 130,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
@@ -131,13 +130,16 @@ class CommunityTile extends StatelessWidget {
                 bottom: 8,
                 child: community.brandLogoMedium != null
                     ? FittedBox(
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: community.brandLogoMedium!,
-                          width: 69,
+                        child: CachedNetworkImage(
+                          imageUrl: community.brandLogoMedium!,
                           height: 30,
+                          width: 69,
                           fit: BoxFit.contain,
                           alignment: Alignment.bottomRight,
+                          errorWidget: (context, url, error) => Container(
+                            width: 69,
+                            height: 30,
+                          ),
                         ),
                       )
                     : Image.asset('assets/images/placeholder.png'),
@@ -147,6 +149,7 @@ class CommunityTile extends StatelessWidget {
           Flexible(
             child: Container(
               color: Colors.white,
+              width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
                 child: Column(
@@ -155,7 +158,7 @@ class CommunityTile extends StatelessWidget {
                   children: [
                     Text(
                       community.name ?? "",
-                      style: CommNametextStyle,
+                      style: commNameTextStyle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -172,10 +175,6 @@ class CommunityTile extends StatelessWidget {
                       textAlign: TextAlign.start,
                       style: textStyle,
                     ),
-                    // Text(
-                    //   'From \$399,990 - \$523015',
-                    //   style: textStyle,
-                    // ),
                     Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,7 +201,8 @@ class CommunityTile extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             color: Colors.black87,
-                                            fontSize: 12),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
                                       ),
                                     ),
                                   ],

@@ -1,91 +1,83 @@
 import 'dart:ui';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:newhomesource/data/model/community_search/community_model.dart';
 import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
 import 'package:newhomesource/utilities/colors.dart';
+import 'package:newhomesource/utilities/style.dart';
 import 'package:newhomesource/view/widgets/shimmer_widget.dart';
 import 'package:newhomesource/viewmodel/communitites_search_view_model.dart';
 import '../../widgets/community_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class CommunitiesSearchResultPage extends StatefulWidget {
-  final TypeAheadModel typeAheadModel;
-  CommunitiesSearchResultPage(this.typeAheadModel);
-  //final var viewModel =
-  static const commNameTextStyle = TextStyle(
-      fontSize: 15,
-      color: Colors.black54,
-      fontStyle: FontStyle.normal,
-      decoration: TextDecoration.none);
-  static const textStyle = TextStyle(
-      fontSize: 12, color: Colors.black54, decoration: TextDecoration.none);
+class SearchResultPage extends StatefulWidget {
+  final TypeAheadModel selectedLocation;
+  SearchResultPage({required Key key, required this.selectedLocation})
+      : super(key: key);
 
   @override
-  _CommunitiesSearchResultPageState createState() =>
-      _CommunitiesSearchResultPageState();
+  SearchResultPageState createState() => SearchResultPageState();
 }
 
-class _CommunitiesSearchResultPageState
-    extends State<CommunitiesSearchResultPage>
-    with AutomaticKeepAliveClientMixin<CommunitiesSearchResultPage> {
+class SearchResultPageState extends State<SearchResultPage>
+    with AutomaticKeepAliveClientMixin<SearchResultPage> {
   late ScrollController _scrollController;
-  late CommunitiesSearchViewModel viewModel;
-  late Future<List<CommunityModel>> _future;
+  late CommunitySearchResultViewModel viewModel;
+  var keyboardVisibilityController = KeyboardVisibilityController();
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_scrollListener);
-    viewModel = CommunitiesSearchViewModel();
-    _future = getCommunities();
+    viewModel = CommunitySearchResultViewModel();
+    getData(widget.selectedLocation);
   }
 
   @override
-  void didUpdateWidget(CommunitiesSearchResultPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    viewModel.communityList.clear();
-    viewModel.page = 1;
-    viewModel.showShimmer = true;
-    getCommunities();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
-  Future<List<CommunityModel>> getCommunities() async {
+  @override
+  void didUpdateWidget(SearchResultPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void getData(TypeAheadModel typeAheadModel) async {
+    print("get data called---> ${typeAheadModel.Name}");
+    viewModel.communityList.clear();
+    viewModel.page = 1;
+    setState(() {
+      viewModel.showShimmer = true;
+    });
+
     if (!viewModel.isLoading) {
+      var result = await viewModel.getData(typeAheadModel);
       setState(() {
-        viewModel.isLoading = true;
-      });
-      var comm = await viewModel.getCommunities(widget.typeAheadModel);
-      setState(() {
-        if (comm.isEmpty || comm.length == viewModel.totalCount) {
+        if (result.isEmpty || result.length == viewModel.totalCount) {
           viewModel.hasLoadMore = false;
         }
-        viewModel.isLoading = false;
+        //viewModel.isLoading = false;
         viewModel.showShimmer = false;
-        //viewModel.communityList.addAll(comm);
       });
     }
-    return viewModel.communityList;
   }
 
   void _scrollListener() {
-    _future = loadMore();
+    loadMore();
   }
 
   Future<List<CommunityModel>> loadMore() async {
     if (!viewModel.isLoading) {
-      // print(_scrollController.position.extentAfter);
       if (_scrollController.position.extentAfter < 150) {
-        setState(() {
-          viewModel.isLoading = true;
-        });
-        var moreItems = await viewModel.loadMore(widget.typeAheadModel);
+        var moreItems = await viewModel.loadMore(widget.selectedLocation);
         setState(() {
           if (moreItems.isEmpty ||
               viewModel.communityList.length == viewModel.totalCount) {
             viewModel.hasLoadMore = false;
           }
           viewModel.isLoading = false;
-          //viewModel.communityList.addAll(moreItems);
         });
       }
       return viewModel.communityList;
@@ -106,55 +98,10 @@ class _CommunitiesSearchResultPageState
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Container(
-          //child: FutureBuilder<List<CommunityModel>>(
-          //     future: _future, // async work
-          //     builder: (BuildContext context,
-          //         AsyncSnapshot<List<CommunityModel>> snapshot) {
-          //       if (viewModel.communityList.isEmpty) {
-          //         return ListView.builder(
-          //           itemCount: 5,
-          //           itemBuilder: (BuildContext context, int index) {
-          //             return buildCommunityShimmer();
-          //           },
-          //         );
-          //       } else {
-          //         switch (snapshot.connectionState) {
-          //           case ConnectionState.waiting:
-          //
-          //           default:
-          //             if (snapshot.hasError)
-          //               return Text('Error: ${snapshot.error}');
-          //             else
-          //               return ListView.builder(
-          //                   itemCount: (viewModel.hasLoadMore
-          //                       ? snapshot.data!.length + 1
-          //                       : snapshot.data!.length),
-          //                   controller: _scrollController,
-          //                   cacheExtent: 9999,
-          //                   itemBuilder: (context, index) {
-          //                     print(index);
-          //                     if (viewModel.hasLoadMore &&
-          //                         index >= snapshot.data!.length) {
-          //                       return Padding(
-          //                         padding: EdgeInsets.all(5),
-          //                         child: const Center(
-          //                             child: CupertinoActivityIndicator()),
-          //                       );
-          //                     } else {
-          //                       return CommunityTile(
-          //                           CommNametextStyle:
-          //                               CommunitiesSearchResultPage
-          //                                   .commNameTextStyle,
-          //                           textStyle:
-          //                               CommunitiesSearchResultPage.textStyle,
-          //                           community: snapshot.data![index]);
-          //                     }
-          //                   });
-          //         }
-          //       }
-          //     })
-
           child: ListView.builder(
+            key: ObjectKey(viewModel.showShimmer
+                ? buildShimmer()
+                : viewModel.communityList[0]),
             itemCount: viewModel.showShimmer
                 ? 5
                 : (viewModel.hasLoadMore
@@ -173,12 +120,11 @@ class _CommunitiesSearchResultPageState
                 );
               } else {
                 if (viewModel.showShimmer) {
-                  return buildCommunityShimmer();
+                  return buildShimmer();
                 } else {
                   return CommunityTile(
-                      CommNametextStyle:
-                          CommunitiesSearchResultPage.commNameTextStyle,
-                      textStyle: CommunitiesSearchResultPage.textStyle,
+                      commNameTextStyle: titleTextStyle,
+                      textStyle: subtitleTextStyle,
                       community: viewModel.communityList[index]);
                 }
               }
@@ -189,7 +135,7 @@ class _CommunitiesSearchResultPageState
     );
   }
 
-  Widget buildCommunityShimmer() => Container(
+  Widget buildShimmer() => Container(
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         width: double.infinity,
         height: 140,
@@ -237,48 +183,4 @@ class _CommunitiesSearchResultPageState
 
   @override
   bool get wantKeepAlive => true;
-}
-
-enum ResponseModelType { Market, Community, City, Zip, Developer, None }
-
-class SortViewModel {
-  late String title;
-  late SortBy sort;
-  late bool sortOrder;
-}
-
-enum SortBy {
-  bydefault,
-  matchingHomes,
-  city,
-  price,
-  builder,
-  community,
-}
-
-extension SortByExtension on SortBy {
-  String get sort {
-    switch (this) {
-      case SortBy.bydefault:
-        return "Random";
-      case SortBy.matchingHomes:
-        return "NumHomes";
-      case SortBy.city:
-        return "City";
-      case SortBy.price:
-        return "Price";
-      case SortBy.builder:
-        return "Brand";
-      case SortBy.community:
-        return "Comm";
-    }
-  }
-}
-
-enum SortModel {
-  sortBy,
-  sortSecondBy,
-  sortFirstBy,
-  SortOrder,
-  SortSecondOrder,
 }

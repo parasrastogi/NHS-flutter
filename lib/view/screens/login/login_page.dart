@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/login_bg.jpg'),
+            image: AssetImage('assets/images/LaunchImage.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -35,31 +35,40 @@ class LoginPage extends StatelessWidget {
             Text('Welcome to NewHomeSource',
                 style: TextStyle(
                   fontSize: 18,
+                  color: Color(0xff093265),
+                  fontWeight: FontWeight.w500,
                   decoration: TextDecoration.none,
                 ),
                 textAlign: TextAlign.center),
             Text(
               'The Smallest Way to Buy a New Home',
-              style: TextStyle(fontSize: 14, decoration: TextDecoration.none),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xff093265),
+                  decoration: TextDecoration.none),
               textAlign: TextAlign.center,
             ),
             SizedBox(
               height: 10,
             ),
-            TextField(
-              maxLines: 1,
-              decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Your Email',
-                  prefixIcon: Icon(Icons.email, size: 20)),
-              textInputAction: TextInputAction.next,
-              autofocus: false,
+            Container(
+              height: MediaQuery.of(context).size.height * .06,
+              child: TextField(
+                maxLines: 1,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Your Email',
+                    prefixIcon: Icon(Icons.email, size: 20)),
+                style: TextStyle(fontSize: 14),
+                textInputAction: TextInputAction.next,
+                autofocus: false,
+              ),
             ),
             SizedBox(
               height: 10,
@@ -77,6 +86,7 @@ class LoginPage extends StatelessWidget {
                   filled: true,
                   prefixIcon: Icon(Icons.lock, size: 20),
                 ),
+                style: TextStyle(fontSize: 14),
                 obscureText: true,
               ),
             ),
@@ -94,7 +104,8 @@ class LoginPage extends StatelessWidget {
               },
               child: Text(
                 'Sign in',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.normal),
               ),
               style: ButtonStyle(
                   fixedSize: MaterialStateProperty.all(Size.fromHeight(40)),
@@ -105,7 +116,8 @@ class LoginPage extends StatelessWidget {
               onPressed: () {},
               child: Container(
                 padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Color(0xff999FA7)),
+                decoration:
+                    BoxDecoration(color: Color(0xff999FA7).withOpacity(0.6)),
                 child: Text(
                   'Forgot Password?',
                   style: TextStyle(color: Colors.yellow),
@@ -154,22 +166,46 @@ class LoginPage extends StatelessWidget {
             ButtonWithIcon(
                 imagePath: 'assets/images/apple.png',
                 title: 'Sign in with Apple',
-                backgroundColor: Color(0xffffffff),
+                backgroundColor: Colors.white,
                 titleColor: Colors.black),
             Expanded(
               child: Container(),
               flex: 1,
             ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Sign Up',
-                style: TextStyle(color: Colors.black),
-              ),
-              style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all(Size.fromHeight(40)),
-                  backgroundColor:
-                      MaterialStateProperty.all(Color(0xffFFCD00))),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(Size.fromHeight(40)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xffFFCD00))),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Skip for now',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(Size.fromHeight(40)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff007AFF))),
+                  ),
+                ),
+              ],
             )
           ],
         ),

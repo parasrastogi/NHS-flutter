@@ -22,8 +22,7 @@ environment:
 
 dependencies:
   json_annotation: ^4.0.0
-  persistent_bottom_nav_bar: ^4.0.2
-  google_maps_flutter: ^2.0.6
+  google_maps_flutter: ^2.0.10
   flutter:
     sdk: flutter
 
@@ -31,13 +30,16 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  geolocator: ^7.2.0+1
+  geolocator: ^7.6.2
   flutter_typeahead: ^3.2.0
   http: ^0.13.3
   transparent_image: ^2.0.0
   cached_network_image: ^3.1.0
   intl: ^0.17.0
   shimmer: ^2.0.0
+  connectivity_plus: ^1.1.0
+  animated_text_kit: ^4.2.1
+  flutter_keyboard_visibility: ^5.0.3
 
 dev_dependencies:
   flutter_test:
