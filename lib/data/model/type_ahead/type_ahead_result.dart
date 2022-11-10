@@ -6,7 +6,7 @@ part 'type_ahead_result.g.dart';
 @JsonSerializable()
 class TypeAheadResult {
   @JsonKey(name: 'Model')
-  final List<TypeAheadModel> typeAheadList;
+  final List<TypeAheadModel>? typeAheadList;
 
   TypeAheadResult({
     required this.typeAheadList,

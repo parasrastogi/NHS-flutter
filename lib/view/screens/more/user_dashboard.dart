@@ -7,7 +7,7 @@ class UserDashBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBlueColor,
+      backgroundColor: kBlueColor.withOpacity(0.8),
       appBar: AppBar(
         centerTitle: true,
         title: SizedBox(
@@ -25,12 +25,15 @@ class UserDashBoard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  SizedBox(
+                    height: 15,
+                  ),
                   Text(
                     'Account Info',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                   SizedBox(
-                    height: 5,
+                    height: 15,
                   ),
                   DashBoardButton(
                     title: "Edit Profile",
@@ -52,12 +55,15 @@ class UserDashBoard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Tools',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
                   SizedBox(
                     height: 5,
+                  ),
+                  Text(
+                    'Tools',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                   DashBoardButton.usingImageIcon(
                     title: "Get Pre-Approved",

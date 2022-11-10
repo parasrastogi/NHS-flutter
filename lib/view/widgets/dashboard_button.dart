@@ -30,7 +30,7 @@ class DashBoardButton extends StatelessWidget {
       // ),
       label: Text(
         title,
-        style: TextStyle(color: kButtonBlueColor),
+        style: TextStyle(color: kButtonBlueColor, fontSize: 14,fontWeight: FontWeight.w400),
       ),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),

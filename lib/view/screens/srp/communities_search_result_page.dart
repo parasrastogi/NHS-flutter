@@ -11,27 +11,33 @@ import '../../widgets/community_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class SearchResultPage extends StatefulWidget {
+class SearchCommunityResultPage extends StatefulWidget {
   final TypeAheadModel selectedLocation;
-  SearchResultPage({required Key key, required this.selectedLocation})
+  final CommunitySearchResultViewModel viewModel;
+  SearchCommunityResultPage(
+      {required Key key,
+      required this.selectedLocation,
+      required this.viewModel})
       : super(key: key);
 
   @override
-  SearchResultPageState createState() => SearchResultPageState();
+  SearchCommunityResultPageState createState() =>
+      SearchCommunityResultPageState();
 }
 
-class SearchResultPageState extends State<SearchResultPage>
-    with AutomaticKeepAliveClientMixin<SearchResultPage> {
+class SearchCommunityResultPageState extends State<SearchCommunityResultPage>
+    with AutomaticKeepAliveClientMixin<SearchCommunityResultPage> {
   late ScrollController _scrollController;
-  late CommunitySearchResultViewModel viewModel;
+
   var keyboardVisibilityController = KeyboardVisibilityController();
 
   @override
   void initState() {
+    print("inti called");
     super.initState();
     _scrollController = ScrollController()..addListener(_scrollListener);
-    viewModel = CommunitySearchResultViewModel();
-    getData(widget.selectedLocation);
+    // viewModel = CommunitySearchResultViewModel();
+    //getData(widget.selectedLocation);
   }
 
   @override
@@ -40,26 +46,26 @@ class SearchResultPageState extends State<SearchResultPage>
   }
 
   @override
-  void didUpdateWidget(SearchResultPage oldWidget) {
+  void didUpdateWidget(SearchCommunityResultPage oldWidget) {
     super.didUpdateWidget(oldWidget);
   }
 
   void getData(TypeAheadModel typeAheadModel) async {
     print("get data called---> ${typeAheadModel.Name}");
-    viewModel.communityList.clear();
-    viewModel.page = 1;
+    widget.viewModel.communityList.clear();
+    widget.viewModel.page = 1;
     setState(() {
-      viewModel.showShimmer = true;
+      widget.viewModel.showShimmer = true;
     });
 
-    if (!viewModel.isLoading) {
-      var result = await viewModel.getData(typeAheadModel);
+    if (!widget.viewModel.isLoading) {
+      var result = await widget.viewModel.getData(typeAheadModel);
       setState(() {
-        if (result.isEmpty || result.length == viewModel.totalCount) {
-          viewModel.hasLoadMore = false;
+        if (result.isEmpty || result.length == widget.viewModel.totalCount) {
+          widget.viewModel.hasLoadMore = false;
         }
         //viewModel.isLoading = false;
-        viewModel.showShimmer = false;
+        widget.viewModel.showShimmer = false;
       });
     }
   }
@@ -69,20 +75,34 @@ class SearchResultPageState extends State<SearchResultPage>
   }
 
   Future<List<CommunityModel>> loadMore() async {
-    if (!viewModel.isLoading) {
+    if (!widget.viewModel.isLoading) {
       if (_scrollController.position.extentAfter < 150) {
-        var moreItems = await viewModel.loadMore(widget.selectedLocation);
+        var moreItems =
+            await widget.viewModel.loadMore(widget.selectedLocation);
         setState(() {
           if (moreItems.isEmpty ||
-              viewModel.communityList.length == viewModel.totalCount) {
-            viewModel.hasLoadMore = false;
+              widget.viewModel.communityList.length ==
+                  widget.viewModel.totalCount) {
+            widget.viewModel.hasLoadMore = false;
           }
-          viewModel.isLoading = false;
+          widget.viewModel.isLoading = false;
         });
       }
-      return viewModel.communityList;
+      return widget.viewModel.communityList;
     }
-    return viewModel.communityList;
+    return widget.viewModel.communityList;
+  }
+
+  void update(List<CommunityModel> result) {
+    if (!widget.viewModel.isLoading) {
+      setState(() {
+        if (result.isEmpty || result.length == widget.viewModel.totalCount) {
+          widget.viewModel.hasLoadMore = false;
+        }
+        //viewModel.isLoading = false;
+        widget.viewModel.showShimmer = false;
+      });
+    }
   }
 
   final brandId = 0;
@@ -99,33 +119,35 @@ class SearchResultPageState extends State<SearchResultPage>
         backgroundColor: kBackgroundColor,
         body: Container(
           child: ListView.builder(
-            key: ObjectKey(viewModel.showShimmer
+            key: ObjectKey(widget.viewModel.showShimmer
                 ? buildShimmer()
-                : viewModel.communityList[0]),
-            itemCount: viewModel.showShimmer
+                : widget.viewModel.communityList.length > 0
+                    ? widget.viewModel.communityList[0]
+                    : CommunityModel.createEmptyModel()),
+            itemCount: widget.viewModel.showShimmer
                 ? 5
-                : (viewModel.hasLoadMore
-                    ? viewModel.communityList.length + 1
-                    : viewModel.communityList.length),
+                : (widget.viewModel.hasLoadMore
+                    ? widget.viewModel.communityList.length + 1
+                    : widget.viewModel.communityList.length),
             controller: _scrollController,
             cacheExtent: 9999,
             itemBuilder: (context, index) {
               print(index);
-              if (!viewModel.showShimmer &&
-                  viewModel.hasLoadMore &&
-                  index >= viewModel.communityList.length) {
+              if (!widget.viewModel.showShimmer &&
+                  widget.viewModel.hasLoadMore &&
+                  index >= widget.viewModel.communityList.length) {
                 return Padding(
                   padding: EdgeInsets.all(5),
                   child: const Center(child: CupertinoActivityIndicator()),
                 );
               } else {
-                if (viewModel.showShimmer) {
+                if (widget.viewModel.showShimmer) {
                   return buildShimmer();
                 } else {
                   return CommunityTile(
                       commNameTextStyle: titleTextStyle,
                       textStyle: subtitleTextStyle,
-                      community: viewModel.communityList[index]);
+                      community: widget.viewModel.communityList[index]);
                 }
               }
             },

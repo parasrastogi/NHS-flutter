@@ -199,6 +199,36 @@ class CommunityModel {
       this.projectType,
       this.marketName});
 
+  CommunityModel.createEmptyModel()
+      : BDXBrandId = 0,
+        ID = 0,
+        BDXID = 0,
+        bdxBuilderID = 0,
+        partnerId = 0,
+        currentDBVersion = 0,
+        maximumPrice = 0,
+        minimumPrice = 0,
+        hasVideos = false,
+        masterPlanID = 0,
+        marketID = 0,
+        longitude = 0,
+        latitude = 0,
+        preferredCommunityAssetId = 0,
+        homeCount = 0,
+        isAlreadyAdded = false,
+        hasGeoJSON = false,
+        isFavorite = false,
+        hasPhotos = false,
+        hasNotes = false,
+        bedLow = 0,
+        bedHigh = 0,
+        bathLow = 0,
+        bathHigh = 0,
+        grLow = 0,
+        grHigh = 0,
+        haBathLow = 0,
+        haBathHigh = 0;
+
   factory CommunityModel.fromJson(Map<String, dynamic> json) =>
       _$CommunityModelFromJson(json);
 

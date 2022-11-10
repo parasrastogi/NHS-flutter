@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:newhomesource/data/model/builder_search/brand_model.dart';
 import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
 import 'package:newhomesource/utilities/colors.dart';
 import 'package:newhomesource/view/widgets/shimmer_widget.dart';
@@ -7,8 +8,9 @@ import 'package:newhomesource/viewmodel/builder_search_viewmodel.dart';
 
 class BuilderSearchResultPage extends StatefulWidget {
   final TypeAheadModel typeAheadModel;
-
-  BuilderSearchResultPage({required Key key, required this.typeAheadModel})
+  final BuilderSearchViewModel viewModel;
+  BuilderSearchResultPage(
+      {required Key key, required this.typeAheadModel, required this.viewModel})
       : super(key: key);
 
   @override
@@ -19,13 +21,10 @@ class BuilderSearchResultPage extends StatefulWidget {
 
 class BuilderSearchResultPageState extends State<BuilderSearchResultPage>
     with AutomaticKeepAliveClientMixin<BuilderSearchResultPage> {
-  late BuilderSearchViewModel _viewModel;
-
   @override
   void initState() {
     super.initState();
-    _viewModel = BuilderSearchViewModel();
-    getBuilderList(widget.typeAheadModel);
+    //getBuilderList(widget.typeAheadModel);
   }
 
   @override
@@ -34,35 +33,44 @@ class BuilderSearchResultPageState extends State<BuilderSearchResultPage>
   }
 
   void getBuilderList(TypeAheadModel typeAheadModel) async {
-    _viewModel.brandList.clear();
-    _viewModel.showShimmer = true;
+    widget.viewModel.brandList.clear();
+    widget.viewModel.showShimmer = true;
     setState(() {
-      _viewModel.aspectRatio = 6 / 4;
+      widget.viewModel.aspectRatio = 6 / 4;
     });
-    var builderList = await _viewModel.getBuilderList(
-        {"MarketId": typeAheadModel.MarketId, "includeMPC": true});
+    var builderList = await widget.viewModel.getBuilderList(typeAheadModel);
     setState(() {
-      _viewModel.brandList = builderList;
-      _viewModel.aspectRatio = 9 / 7;
+      widget.viewModel.brandList = builderList;
+      widget.viewModel.aspectRatio = 9 / 7;
     });
+  }
+
+  void update(List<BrandModel> result) {
+    if (!widget.viewModel.isLoading) {
+      setState(() {
+        widget.viewModel.showShimmer = false;
+        widget.viewModel.aspectRatio = 9 / 7;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
-      childAspectRatio: _viewModel.aspectRatio,
+      childAspectRatio: widget.viewModel.aspectRatio,
       padding: EdgeInsets.fromLTRB(0, 10, 0, 40),
       crossAxisCount: 3,
       mainAxisSpacing: 6,
       crossAxisSpacing: 10,
       children: List.generate(
-          _viewModel.isLoading ? 5 : _viewModel.brandList.length, (index) {
-        if (_viewModel.isLoading) {
+          widget.viewModel.showShimmer ? 5 : widget.viewModel.brandList.length,
+          (index) {
+        if (widget.viewModel.showShimmer) {
           return Container(
             child: buildBuilderShimmer(),
           );
         } else {
-          var builder = _viewModel.brandList[index];
+          var builder = widget.viewModel.brandList[index];
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

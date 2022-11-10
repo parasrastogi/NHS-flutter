@@ -20,16 +20,30 @@ class TypeAheadService {
 
     var response = await http.get(url, headers: _jsonHeaders);
 
-    final parsedJson = json.decode(response.body);
-    var list = TypeAheadResult.fromJson(parsedJson);
-    // final list = parsedJson['Model'] as List;
-    // var typeAheadList = list.map(
-    //   (typeAhead) {
-    //     final parsedJson = typeAhead as Map<String, dynamic>;
-    //     print(parsedJson);
-    //     return TypeAheadModel.fromJson(parsedJson);
-    //   },
-    // ).toList();
-    return list.typeAheadList;
+    print("response.body---> ${response.body}");
+
+    try{
+      final parsedJson = json.decode(response.body);
+      if (parsedJson['Model'] == null){
+        return List<TypeAheadModel>.empty();
+      }else{
+        var list = TypeAheadResult.fromJson(parsedJson);
+
+        // final list = parsedJson['Model'] as List;
+        // var typeAheadList = list.map(
+        //   (typeAhead) {
+        //     final parsedJson = typeAhead as Map<String, dynamic>;
+        //     print(parsedJson);
+        //     return TypeAheadModel.fromJson(parsedJson);
+        //   },
+        // ).toList();
+        print("list.typeAheadList---> ${list.typeAheadList}");
+        return list.typeAheadList ?? List<TypeAheadModel>.empty();
+      }
+
+    }on Exception{
+
+    }
+      return List<TypeAheadModel>.empty();
   }
 }

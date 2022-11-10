@@ -1,6 +1,7 @@
 import 'package:newhomesource/data/model/community_search/community_model.dart';
 import 'package:newhomesource/data/model/community_search/paging.dart';
 import 'package:newhomesource/data/model/community_search/request_param_model.dart';
+import 'package:newhomesource/data/model/home_search/grouped_home_model.dart';
 import 'package:newhomesource/data/model/type_ahead/type_ahead_model.dart';
 import 'package:newhomesource/data/repository/community_search_repository.dart';
 
@@ -13,8 +14,12 @@ class CommunitySearchResultViewModel {
   bool isLoading = false;
   bool showShimmer = true;
   List<CommunityModel> communityList = [];
+  List<GroupedHomeModel> groupedHomeList = [];
+  Map<int, CommunityModel> commIDAndModelMap = {};
+
   Future<List<CommunityModel>> getData(TypeAheadModel typeAheadModel) async {
     isLoading = true;
+    hasLoadMore = true;
     late RequestParamModel reqData;
     switch (typeAheadModel.Type) {
       case "Market":
@@ -58,7 +63,6 @@ class CommunitySearchResultViewModel {
             originLng: typeAheadModel.Longitude,
             radius: 25);
         break;
-
       default:
         break;
     }
@@ -67,7 +71,11 @@ class CommunitySearchResultViewModel {
         await CommunitySearchRepository().fetchCommunityList(reqData);
     totalCount = communityResult.totalCount ?? 0;
     isLoading = false;
+    showShimmer = false;
     communityList.addAll(communityResult.resultsArray);
+    communityResult.resultsArray.forEach((community) {
+      commIDAndModelMap[community.BDXID] = community;
+    });
     return communityList;
   }
 

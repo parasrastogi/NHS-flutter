@@ -5,6 +5,8 @@ import 'package:newhomesource/data/model/community_search/community_model.dart';
 import 'package:newhomesource/utilities/utils.dart';
 import 'dart:ui';
 
+import 'gradient_widget.dart';
+
 class CommunityTile extends StatelessWidget {
   CommunityTile(
       {Key? key,
@@ -58,7 +60,7 @@ class CommunityTile extends StatelessWidget {
                               width: MediaQuery.of(context).size.width * .45,
                               fit: BoxFit.cover,
                             ),
-                            GradientContainer(gradientColors: gradientColors),
+                            GradientWidget(gradientColors: gradientColors),
                           ],
                         ),
                       )
@@ -70,7 +72,7 @@ class CommunityTile extends StatelessWidget {
                             width: MediaQuery.of(context).size.width * .45,
                             fit: BoxFit.cover,
                           ),
-                          GradientContainer(gradientColors: gradientColors),
+                          GradientWidget(gradientColors: gradientColors),
                         ],
                       ),
               ),
@@ -255,29 +257,6 @@ class CommunityTile extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class GradientContainer extends StatelessWidget {
-  const GradientContainer({
-    Key? key,
-    required this.gradientColors,
-  }) : super(key: key);
-
-  final List<Color> gradientColors;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      width: MediaQuery.of(context).size.width * .45,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.3, 1],
-              colors: gradientColors)),
     );
   }
 }
